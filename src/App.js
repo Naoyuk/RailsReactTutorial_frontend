@@ -1,10 +1,11 @@
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import {Home} from './Home';
-import {Department} from './Department';
-import {Employee} from './Employee';
-import {Navigation} from './Navigation';
+import {Home} from './components/Home';
+import {Department} from './components/Department';
+import {Employee} from './components/Employee';
+import {Navigation} from './components/Navigation';
 
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 

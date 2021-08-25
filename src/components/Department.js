@@ -2,8 +2,6 @@ import React,{Component} from 'react';
 import {Table} from 'react-bootstrap';
 
 import {Button,ButtonToolbar} from 'react-bootstrap';
-import {AddDepModal} from './AddDepModal';
-import {EditDepModal} from './EditDepModal';
 
 export class Department extends Component{
 
@@ -12,11 +10,27 @@ export class Department extends Component{
         this.state = {deps: [], addModalShow: false, editModalShow: false}
     }
 
+    get axios() {
+        const axiosBase = require('axios');
+        return axiosBase.create({
+            baseURL: process.env.REACT_APP_API,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            responseType: 'json'
+        });
+    }
+
     refreshList(){
-        fetch(process.env.REACT_APP_API + 'department')
-        .then(response=>response.json())
-        .then(data=>{
-            this.setState({deps:data});
+        this.axios.get('departments')
+        .then(results => {
+            this.setState({
+                deps: results.data
+            });
+        })
+        .catch(data => {
+            console.log(data);
         });
     }
 
@@ -47,33 +61,28 @@ export class Department extends Component{
                 <Table className="mt-4" striped bordered hover size="sm">
                     <thead>
                         <tr>
-                            <th>DepartmentId</th>
-                            <th>DepartmentName</th>
+                            <th>Department ID</th>
+                            <th>Department Name</th>
                             <th>Options</th>
                         </tr>
                     </thead>
                     <tbody>
                         {deps.map(dep=>
-                            <tr key={dep.DepartmentId}>
-                                <td>{dep.DepartmentId}</td>
-                                <td>{dep.DepartmentName}</td>
+                            <tr key={dep.id}>
+                                <td>{dep.id}</td>
+                                <td>{dep.name}</td>
                                 <td>
                                     <ButtonToolbar>
                                         <Button className="mr-2" variant="info"
                                         onClick={()=>this.setState({editModalShow: true,
-                                        depid: dep.DepartmentId, depname: dep.DepartmentName})}>
+                                        depid: dep.id, depname: dep.name})}>
                                             Edit
                                         </Button>
 
                                         <Button className="mr-2" variant="danger"
-                                        onClick={()=>this.deleteDep(dep.DepartmentId)}>
+                                        onClick={()=>this.deleteDep(dep.id)}>
                                             Delete
                                         </Button>
-
-                                        <EditDepModal show={this.state.editModalShow}
-                                        onHide={editModalClose}
-                                        depid={depid}
-                                        depname={depname} />
                                     </ButtonToolbar>
                                 </td>
                             </tr>)}
@@ -86,8 +95,6 @@ export class Department extends Component{
                     >
                         Add Department
                    </Button>
-                   <AddDepModal show={this.state.addModalShow}
-                   onHide={addModalClose} />
                 </ButtonToolbar>
             </div>
         )
