@@ -2,18 +2,16 @@ import React,{Component} from 'react';
 import {Table} from 'react-bootstrap';
 
 import {Button,ButtonToolbar} from 'react-bootstrap';
-import {AddEmpModal} from './AddEmpModal';
-import {EditEmpModal} from './EditEmpModal';
 
 export class Employee extends Component{
 
     constructor(props){
         super(props);
-        this.state = {emps: [], addModalShow: false, editModalShow: false}
+        this.state = { emps: [] }
     }
 
     refreshList(){
-        fetch(process.env.REACT_APP_API + 'employee')
+        fetch(process.env.REACT_APP_API + 'employees')
         .then(response=>response.json())
         .then(data=>{
             this.setState({emps:data});
@@ -38,9 +36,9 @@ export class Employee extends Component{
     }
 
     render(){
-        const {emps, empid, empname, depmt, photofilename, doj}=this.state;
-        let addModalClose=()=>this.setState({addModalShow: false});
-        let editModalClose=()=>this.setState({editModalShow: false});
+        const {emps, empid, empname, depmt, photofilename, doj} = this.state;
+        // let addModalClose=()=>this.setState({addModalShow: false});
+        // let editModalClose=()=>this.setState({editModalShow: false});
 
         return (
             <div>
@@ -61,42 +59,11 @@ export class Employee extends Component{
                                 <td>{emp.EmployeeName}</td>
                                 <td>{emp.Department}</td>
                                 <td>{emp.DateOfJoining}</td>
-                                <td>
-                                    <ButtonToolbar>
-                                        <Button className="mr-2" variant="info"
-                                        onClick={()=>this.setState({editModalShow: true,
-                                        empid: emp.EmployeeId, empname: emp.EmployeeName, depmt: emp.Department, photofilename: emp.PhotoFileName, doj: emp.DateOfJoining})}>
-                                            Edit
-                                        </Button>
-
-                                        <Button className="mr-2" variant="danger"
-                                        onClick={()=>this.deleteEmp(emp.EmployeeId)}>
-                                            Delete
-                                        </Button>
-
-                                        <EditEmpModal show={this.state.editModalShow}
-                                        onHide={editModalClose}
-                                        empid={empid}
-                                        empname={empname}
-                                        depmt={depmt}
-                                        photofilename={photofilename}
-                                        doj={doj}
-                                        />
-                                    </ButtonToolbar>
-                                </td>
+                                <td>Edit | Delete</td>
                             </tr>)}
                     </tbody>
                 </Table>
                 
-                <ButtonToolbar>
-                    <Button variant="primary"
-                    onClick={()=>this.setState({addModalShow: true})}
-                    >
-                        Add Employee
-                   </Button>
-                   <AddEmpModal show={this.state.addModalShow}
-                   onHide={addModalClose} />
-                </ButtonToolbar>
             </div>
         )
     }
